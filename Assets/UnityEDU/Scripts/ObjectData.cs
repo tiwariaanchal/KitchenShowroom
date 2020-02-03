@@ -9,6 +9,7 @@ public class ObjectData : MonoBehaviour {
     public List <GameObject> woodBase = new List<GameObject>();
     public List<GameObject> drawerOptions = new List<GameObject>();
     public List<GameObject> doorOptions = new List<GameObject>();
+    public List<GameObject> sinkOptions = new List<GameObject>();
     public List<GameObject> applianceOptions = new List<GameObject>();
     public List<Material> counterMat = new List<Material>();
     public List<Material> woodMat = new List<Material>();

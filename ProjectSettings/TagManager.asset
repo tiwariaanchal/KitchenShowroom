@@ -3,7 +3,22 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Kitchen
+  - OptionRow
+  - OptionArea
+  - Door
+  - Drawer
+  - Knobs
+  - Pulls
+  - ApplianceOpt
+  - CompPanel
+  - MatSwatch
+  - StyleSwatch
+  - Granite
+  - Wood
+  - Surface
+  - Appliance
   layers:
   - Default
   - TransparentFX
@@ -14,7 +29,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
+  - DoNotReflect
   - 
   - 
   - 

@@ -12,19 +12,31 @@ public class ConfigUI : MonoBehaviour {
     */
 
     private CameraController camScript;
+    
     public Image infoPanel;
+    
     public GameObject selectionIcon;
     public bool panelActive = false;
     private Animator anim;
+    private AutoFocus af;
+    private bool autoFocus;
+    public ToggleVisibility panelToggle;
 
     private void Start()
     {
         camScript = Camera.main.GetComponent<CameraController>();
+        af = FindObjectOfType<AutoFocus>();
+        if (af != null)
+        {
+            autoFocus = true; 
+        }
+
         CameraController.UpdateSelection += UpdatePosition;
         CameraController.UpdateSelection += UpdatePanel;
         selectionIcon.SetActive(false);
-        anim = infoPanel.gameObject.GetComponent<Animator>();
-
+       anim = infoPanel.gameObject.GetComponent<Animator>();
+        if (panelToggle == null)
+            Debug.LogError("Panel Toggle needs to be set (to the button that toggles the visibility of the options panel, called ShowHideButton in scene KitchenTypeA)!");
     }
 
     //Move the worldspace UI icon to the selected object
@@ -39,6 +51,7 @@ public class ConfigUI : MonoBehaviour {
     //Where all the panel generation work happens!
     public void UpdatePanel ()
     {
+        return; // this is now handled in NewOptionsPanel.
         GameObject currentObj = camScript.selectedObj.gameObject;
         ObjectData currentData = currentObj.GetComponent<ObjectData>();
         string setTag = null;
@@ -54,6 +67,9 @@ public class ConfigUI : MonoBehaviour {
             }
             pooledObject.SetActive(false);
         }
+
+        if (currentData == null)
+            return;
 
         //Figure out how many panels need to be added and enable them. 
         for (int i = 0; i < currentData.components.Count; i++)
@@ -85,7 +101,7 @@ public class ConfigUI : MonoBehaviour {
                     //Add the new row
                     GameObject childPanel = PoolGenerator.instance.GetPooledObject("OptionRow");
                     childPanel.SetActive(true);
-                    childPanel.transform.SetParent(panelGroup);
+                    childPanel.transform.SetParent(panelGroup, false);
                    
                     //Name the new row
                     PanelManager childData = childPanel.GetComponent<PanelManager>();
@@ -96,7 +112,7 @@ public class ConfigUI : MonoBehaviour {
                     {
                         GameObject swatch = PoolGenerator.instance.GetPooledObject("MatSwatch");
                         swatch.SetActive(true);
-                        swatch.transform.SetParent(childData.optionArea.transform);
+                        swatch.transform.SetParent(childData.optionArea.transform, false);
 
                         //Name the swatch
                         var swatchText = swatch.GetComponentInChildren<TMPro.TMP_Text>();
@@ -177,7 +193,7 @@ public class ConfigUI : MonoBehaviour {
                             {
                                 GameObject styleButton = PoolGenerator.instance.GetPooledObject("StyleSwatch");
                                 styleButton.SetActive(true);                                
-                                styleButton.transform.SetParent(swapData.optionArea.transform);
+                                styleButton.transform.SetParent(swapData.optionArea.transform, false);
                                 styleButton.tag = "Door";
                                 var styleText = styleButton.GetComponentInChildren<TMPro.TMP_Text>();
                                 styleText.text = door.name;
@@ -191,7 +207,7 @@ public class ConfigUI : MonoBehaviour {
                             {
                                 GameObject styleButton = PoolGenerator.instance.GetPooledObject("StyleSwatch");
                                 styleButton.SetActive(true);
-                                styleButton.transform.SetParent(swapData.optionArea.transform);
+                                styleButton.transform.SetParent(swapData.optionArea.transform, false); // false was not there before - JAB
                                 styleButton.tag = "Drawer";
                                 var styleText = styleButton.GetComponentInChildren<TMPro.TMP_Text>();
                                 styleText.text = drawer.name;
@@ -206,7 +222,7 @@ public class ConfigUI : MonoBehaviour {
                                 GameObject styleButton = PoolGenerator.instance.GetPooledObject("StyleSwatch");
                                 styleButton.SetActive(true);
                                 styleButton.tag = "ApplianceOpt";
-                                styleButton.transform.SetParent(swapData.optionArea.transform);
+                                styleButton.transform.SetParent(swapData.optionArea.transform, false);
                                 var styleText = styleButton.GetComponentInChildren<TMPro.TMP_Text>();
                                 styleText.text = appliance.name;
                             }
@@ -251,15 +267,18 @@ public class ConfigUI : MonoBehaviour {
 
     //Controls the panel animation
     public void PanelViewer()
-    {
+    {        
         if (!panelActive)
         {
-            anim.SetTrigger("slideIn");
+            //anim.SetTrigger("slideIn");
             panelActive = true;
+            panelToggle.Show();
         } else
         {
-            anim.SetTrigger("slideOut");
+            //anim.SetTrigger("slideOut");
             panelActive = false;
+            panelToggle.Hide();
+                        
         }
     }
 

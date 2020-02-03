@@ -40,6 +40,11 @@ public class ObjectUpdater : MonoBehaviour {
 
     public void MeshSwitch ()
     {
+        if (camControl == null)
+        {
+            Debug.Log("CamControl is null.");
+            camControl = FindObjectOfType<CameraController>();
+        }
         GameObject currentGO = camControl.selectedObj.gameObject;
         ObjectData currentData = currentGO.GetComponent<ObjectData>();
         TMPro.TMP_Text buttonName = GetComponentInChildren<TMPro.TMP_Text>();
@@ -90,12 +95,19 @@ public class ObjectUpdater : MonoBehaviour {
         }
     }
 
-  
     public void MaterialSwitch ()
     {
+        if (camControl == null)
+        {
+            Debug.Log("CamControl is null.");
+            camControl = FindObjectOfType<CameraController>();
+        }
         GameObject currentGO = camControl.selectedObj.gameObject;
         ObjectData currentData = currentGO.GetComponent<ObjectData>();
         string currentTag = tag;
+        Debug.Log("ObjectUpdater MaterialSwitch CurrentObject name: " + currentGO.name);
+        Debug.Log("ObjectUpdater MaterialSwitch Debug tag: " + tag);
+
         List<GameObject> currentCollection = new List<GameObject>();
         List<Material> currentOptions = new List<Material>();
         TMPro.TMP_Text buttonName = GetComponentInChildren<TMPro.TMP_Text>();
@@ -168,7 +180,24 @@ public class ObjectUpdater : MonoBehaviour {
 
                 break;
             default:
-                Debug.Log("Warning: Selected an object without a defined tag!");
+                // handle wood options. It seems that the untagged items all use wood.
+
+                currentOptions = currentData.woodMat;
+                foreach (var body in currentData.woodBase)
+                {
+                    currentCollection.Add(body);
+                }
+
+                currentOptions = currentData.woodMat;
+                foreach (var woodpart in currentData.doorOptions)
+                {
+                    foreach (Transform child in woodpart.transform)
+                    {
+                        currentCollection.Add(child.gameObject);
+                    }
+                }
+
+                //Debug.Log("Warning: Selected an object without a defined tag!");
                 break;
         }
 
